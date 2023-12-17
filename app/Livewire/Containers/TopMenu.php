@@ -15,8 +15,8 @@ class TopMenu extends Component
 
     public function resetFiltersPosition()
     {
-        $this->position = '0';
-        $this->dispatch('setFiltersPosition', position:  '0');
+        $this->position = '';
+        $this->dispatch('setFiltersPosition', position:  '');
     }
 
 
@@ -31,7 +31,6 @@ class TopMenu extends Component
 
     public function render()
     {
-        $this->resetFiltersPosition();
 
         $mainTable = new Containers;
 
