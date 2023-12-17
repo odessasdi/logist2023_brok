@@ -1,15 +1,13 @@
 <x-slot name="header">
+
     <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
         {{ __('Admin Permissions') }}
     </h2>
+
+
 </x-slot>
 
 <div>
-    @if (session()->has('success'))
-        <div class="alert alert-success">
-            {{ session()->get('success') }}
-        </div>
-    @endif
     <div class="mt-8 flow-root">
         <div class="p-5">
             <button wire:click="create" type="button"
@@ -106,6 +104,4 @@
             </div>
         </div>
     @endif
-
-
 </div>

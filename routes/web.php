@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\AdminPermissions;
 use App\Livewire\AdminUser;
 use App\Livewire\AdminRoles;
+use App\Livewire\Containers;
+use App\Livewire\Counter;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ use App\Livewire\AdminRoles;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return auth()->check() ? redirect('/dashboard') : redirect('/login') ;
 });
 
 Route::middleware([
@@ -35,6 +37,11 @@ Route::middleware('can:admin_menu')->group(function () {
     Route::get('/adminuser', AdminUser::class)->middleware(['auth', 'verified'])->name('adminuser');
     Route::get('/adminroles', AdminRoles::class)->middleware(['auth', 'verified'])->name('adminroles');
     Route::get('/adminpermissions', AdminPermissions::class)->middleware(['auth', 'verified'])->name('adminpermissions');
+    
 
 });
+
+
+Route::get('/сontainers', Containers::class)->middleware(['auth', 'verified'])->name('сontainers')->middleware('can:сontainers');
+Route::get('/counter', Counter::class)->name('counter')->middleware('can:counter');;
 

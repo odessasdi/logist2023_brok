@@ -1,37 +1,25 @@
 <?php
-// TODO!
+
 namespace App\Livewire\Containers;
 
 use Livewire\Component;
 use App\Livewire\Containers;
+use App\Models\container;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+//use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 
 
-class TopMenu extends Component
+class StatSmallAll extends Component
+
 {
     public $position = '';
 
-
-
-    public function resetFiltersPosition()
-    {
-        $this->position = '';
-        $this->dispatch('setFiltersPosition', position:  '');
-    }
-
-
-
-    public function setFiltersPosition($position)
-    {
-        $this->position = $position;
-        $this->dispatch('setFiltersPosition', position: $position);
-
-    }
-
-
     public function render()
     {
-
+       
         $mainTable = new Containers;
 
         $all= $mainTable->StatSmallAll()->count();
@@ -47,11 +35,6 @@ class TopMenu extends Component
 
         if(isset(request()->filters)){$this->position = request()->filters['position'];};
         
-        return view('livewire.containers.top-menu', ['in_work' => $in_work, 'out_ports'=> $out_ports, 'ports'=> $ports, 'all' => $all, 'storage' => $storage, 'pl' => $pl, 'ukr' => $ukr, 'over' => $over, 'position' => $this->position ]);
-
+        return view('livewire.stat-small', ['in_work' => $in_work, 'out_ports'=> $out_ports, 'ports'=> $ports, 'all' => $all, 'storage' => $storage, 'pl' => $pl, 'ukr' => $ukr, 'over' => $over, 'position' => $this->position ]);
     }
 }
-
-
-
-

@@ -46,9 +46,19 @@
                     </div>
                     @endcan
 
+                    @can('сontainers')
+                    <x-nav-link href="{{ route('сontainers') }}" :active="request()->routeIs('сontainers')">
+                        {{ __('сontainers') }}
+                    </x-nav-link>
+                    @endcan
 
+                    @can('counter')
+                    <x-nav-link href="{{ route('counter') }}" :active="request()->routeIs('counter')">
+                        {{ __('counter') }}
+                    </x-nav-link>
+                    @endcan
 
-             
+                    
                 </div>
         
            

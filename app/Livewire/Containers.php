@@ -7,12 +7,12 @@ use App\Models\Port;
 use App\Models\Container;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
-
-
-
-
 use Livewire\Component;
-
+use Livewire\Attributes\On;
+use App\Livewire\Forms\ContainerForm;
+use App\Models\Status;
+use App\Models\Line;
+use App\Helpers\ContainerHelper;
 class Containers extends Component
 {
 
@@ -31,20 +31,103 @@ class Containers extends Component
     ];
 
     protected $queryString = ['sortField', 'sortDirection', 'search', 'filters'];
-   
+    public $isOpen = false;
+    public $id;
+
+
+    public ContainerForm $form;
+
+    public function closeModal()
+    {
+        $this->isOpen = false;
+        $this->form->reset();
+    }
+
+    public function openModal()
+    {
+        $this->resetValidation();
+        $this->isOpen = true;
+    }
+
+    public function create()
+    {
+        $this->form->reset();
+        $this->openModal();
+    }
+
+    public function store()
+    {
+        // $this->validate();
+        $this->form->save();
+        $this->closeModal();
+        $this->dispatch('banner_alert', style: 'success', title: 'Permissins created successfully' );
+        // dd($this->isOpen);
+    }
+
+
+    public function edit($id)
+    {
+        $this->closeModal();
+
+        // dd('edit');
+        $container = Container::findOrFail($id);
+        //  dd($container->dateStart);
+        $this->id = $id;
+        $this->form->id = $id;
+        $this->form->containerNumber = $container->containerNumber;
+        $this->form->containerGoods = $container->containerGoods;
+        $this->form->containerWeight = $container->containerWeight;
+        $this->form->line_id = $container->line_id;
+        $this->form->port_id = $container->port_id;
+        $this->form->status_id = $container->status_id;
+        $this->form->client_id = $container->client_id;
+        $this->form->expeditor_id = $container->expeditor_id;
+        $this->form->destination = $container->destination;
+        $this->form->dateStart = $container->dateStart;
+        $this->form->datePort = $container->datePort;
+        $this->form->dateStorage = $container->dateStorage;
+        $this->form->dateUkraine = $container->dateUkraine;
+        $this->form->dateOver = $container->dateOver;
+        $this->form->dateEnd = $container->dateEnd;
+        $this->form->note1 = $container->note1;
+        $this->form->note2 = $container->note2;
+
+        $this->openModal();
+    }
+
+
+    public function update()
+    {
+        if ($this->id) {
+
+    
+            $this->form->save();
+
+            $this->id = '';
+            $this->dispatch('banner_alert', style: 'success', title: 'Permissins updated successfully' );
+            $this->closeModal();
+            $this->form->reset();
+
+        }
+    }
+
+    #[On('setFiltersPosition')] 
+    public function setFiltersPosition($position)
+    {
+        $this->filters['position'] = $position;
+    }
+
     public function render()
     {
-
- 
-
-
         $this->getContainers();   
         $this->modifyContainers();
         $ports = port::all();
         $expeditors = expeditor::all();
         $clients = Client::all();
+        $statuses = Status::all();
+        $lines = Line::all();
     
-        return view('livewire.containers', ['containers' => $this->containers, 'ports' => $ports,  'expeditors' => $expeditors,   'clients' => $clients,]);
+        return view('livewire.containers', ['containers' => $this->containers, 'ports' => $ports,  'expeditors' => $expeditors,   'clients' => $clients, 'statuses' => $statuses, 'lines' => $lines]);
     }
 
 
@@ -60,8 +143,6 @@ class Containers extends Component
     
     public function getContainers()
     {
-       
-
         $this->containers =  Container::with('port', 'line', 
         'status', 
         'expeditor', 'client')
@@ -97,13 +178,18 @@ class Containers extends Component
 
         
         $this->containers = $this->containers->map(function ($item) use ($positions, $inWorkPositions) {
+          
+
+            $item->isValidContainerNumber = ContainerHelper::isValidContainerNumber($item->containerNumber);
+         
+
             $item->position = '';
             $item->position_date = '';
             $item->position_diff_date = '';
             $item->inWork_diff_date = '';
             $item->inWorkPosition = '';
             $item->oldCs = '';
-
+         
 
             if ($item->dateOver){
                 $item->position = 6;
@@ -201,6 +287,7 @@ class Containers extends Component
             $this->filters['expeditor'] ? $this->containers = $this->containers->where('expeditor_id', $this->filters['expeditor']) : '';
         };
 
+    
     }
 
 

@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Spatie\Permission\Models\Permission;
 use App\Livewire\Forms\PermissinsForm;
+use Illuminate\Support\Facades\Log;
 
 class AdminPermissions extends Component
 {
@@ -13,8 +14,6 @@ class AdminPermissions extends Component
     public $id;
 
     public PermissinsForm $form;
-
-
 
     public function closeModal()
     {
@@ -46,7 +45,7 @@ class AdminPermissions extends Component
     {
         $this->validate();
         $this->form->save();
-        session()->flash('success', 'Permissins created successfully.');
+        $this->dispatch('banner_alert', style: 'success', title: 'Permissins created successfully' );
         $this->reset('form.name');
         $this->closeModal();
     }
@@ -61,19 +60,12 @@ class AdminPermissions extends Component
                 'name' => $this->form->name,
             ]);
             $this->id = '';
-            session()->flash('success', 'Permissins updated successfully.');
+            $this->dispatch('banner_alert', style: 'success', title: 'Permissins updated successfully' );
             $this->closeModal();
             $this->reset('form.name');
+
         }
     }
-
-
-    // public function delete($id)
-    // {
-    //     Permission::find($id)->delete();
-    //     session()->flash('success', 'Permissins deleted successfully.');
-    //     $this->reset('form.name');
-    // }
 
 
     public function render()
