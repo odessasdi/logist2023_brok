@@ -23,7 +23,7 @@ class Containers extends Component
     public $containers = '';
 
     public $filters = [
-        'position' => '0',
+        'position' => '',
         'status' => '',
         'port' => '',
         'client' => '',

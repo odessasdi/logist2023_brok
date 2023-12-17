@@ -9,14 +9,14 @@ use App\Livewire\Containers;
 
 class TopMenu extends Component
 {
-    public $position = '0';
+    public $position = '';
 
 
 
     public function resetFiltersPosition()
     {
-        $this->position = '';
-        $this->dispatch('setFiltersPosition', position:  '');
+        $this->position = '0';
+        $this->dispatch('setFiltersPosition', position:  '0');
     }
 
 
@@ -31,6 +31,7 @@ class TopMenu extends Component
 
     public function render()
     {
+        $this->resetFiltersPosition();
 
         $mainTable = new Containers;
 
