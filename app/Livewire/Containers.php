@@ -23,7 +23,7 @@ class Containers extends Component
     public $containers = '';
 
     public $filters = [
-        'position' => '',
+        'position' => '0',
         'status' => '',
         'port' => '',
         'client' => '',
@@ -180,7 +180,7 @@ class Containers extends Component
         $this->containers = $this->containers->map(function ($item) use ($positions, $inWorkPositions) {
           
 
-            $item->isValidContainerNumber = ContainerHelper::isValidContainerNumber($item->containerNumber);
+            // $item->isValidContainerNumber = ContainerHelper::isValidContainerNumber($item->containerNumber);
          
 
             $item->position = '';
