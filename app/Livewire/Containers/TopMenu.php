@@ -9,7 +9,7 @@ use App\Livewire\Containers;
 
 class TopMenu extends Component
 {
-    public $position = '';
+    public $position = '0';
 
 
 
