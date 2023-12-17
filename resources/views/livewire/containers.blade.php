@@ -1,5 +1,5 @@
 <x-slot name="header">
-    <livewire:containers.top-menu>
+    <livewire:containers.top-menu lazy>
 </x-slot>
 
 <div class="py-4">
@@ -483,6 +483,7 @@
                                                                 </p>
                                                             </div>
 
+                                                            @can('clients_show')
                                                             <div class="col-span-6 sm:col-span-1">
                                                                 <label for="client_id"
                                                                     class="block text-sm font-medium text-gray-700">КЛИЕНТ</label>
@@ -502,6 +503,8 @@
                                                                     @enderror
                                                                 </p>
                                                             </div>
+                                                            @endcan
+                                                            
                                                         </div>
                                                         <div class="grid grid-cols-6 gap-6 pt-4">
 
