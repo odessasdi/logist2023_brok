@@ -16,27 +16,27 @@ class Container extends Model
 
     public function client()
     {
-      return $this->belongsTo(client::class, 'client_id', 'id');
+      return $this->belongsTo(Client::class, 'client_id', 'id');
     }
     
     public function expeditor()
     {
-      return $this->belongsTo(expeditor::class, 'expeditor_id', 'id');
+      return $this->belongsTo(Expeditor::class, 'expeditor_id', 'id');
     }
   
     public function port()
     {
-      return $this->belongsTo(port::class, 'port_id', 'id');
+      return $this->belongsTo(Port::class, 'port_id', 'id');
     }
 
     public function line()
     {
-      return $this->belongsTo(line::class, 'line_id', 'id');
+      return $this->belongsTo(Line::class, 'line_id', 'id');
     }
 
     public function status()
     {
-      return $this->belongsTo(status::class, 'status_id', 'id');
+      return $this->belongsTo(Status::class, 'status_id', 'id');
     }
 
 }
