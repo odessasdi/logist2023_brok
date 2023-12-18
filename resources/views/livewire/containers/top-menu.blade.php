@@ -1,21 +1,9 @@
-<div>
+<div class="items-center h-14 bg-white p-0 m-0">
 <nav aria-label="Progress">
 
 
     <ol role="list" class="divide-y divide-gray-300 rounded-md border border-gray-300 md:flex md:divide-y-0">
-        <li class="relative md:flex md:flex-1  border-gray-400  border-double border-4 bg-blue-50">
-            <a href="#" wire:click.prevent="resetFiltersPosition" class="group flex items-center">
-                <span class="flex items-center px-2 py-1 text-sm font-medium">
-                    <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 @if($position == '')  border-indigo-600 @endif group-hover:border-gray-400">
-                        <span class="text-gray-500 group-hover:text-gray-900">∑</span>
-                    </span>
-                    <span class="mt-0.5 ml-2 flex min-w-0 flex-col">
-                        <span class="text-sm font-medium">ВСЕ В БАЗЕ</span>
-                        <span class="text-sm font-medium text-gray-500">{{ $all }}</span>
-                    </span>
-                </span>
-            </a>
-        </li>
+      
 
         <li class="relative md:flex md:flex-1 border border-gray-300 bg-green-50 ">
                 <a  href="#" wire:click.prevent="setFiltersPosition({{ '0' }})" class="group flex items-center">
@@ -144,6 +132,20 @@
                 </span>
             </a>
         </li> 
+
+          <li class="relative md:flex md:flex-1  border-gray-400  border-double border-4 bg-blue-50">
+            <a href="#" wire:click.prevent="resetFiltersPosition" class="group flex items-center">
+                <span class="flex items-center px-2 py-1 text-sm font-medium">
+                    <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border-2 @if($position == '')  border-indigo-600 @endif group-hover:border-gray-400">
+                        <span class="text-gray-500 group-hover:text-gray-900">∑</span>
+                    </span>
+                    <span class="mt-0.5 ml-2 flex min-w-0 flex-col">
+                        <span class="text-sm font-medium">ВСЕ В БАЗЕ</span>
+                        <span class="text-sm font-medium text-gray-500">{{ $all }}</span>
+                    </span>
+                </span>
+            </a>
+        </li>
     </ol>
 </nav>
 </div>
