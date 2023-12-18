@@ -12,16 +12,17 @@ use Livewire\Attributes\On;
 use App\Livewire\Forms\ContainerForm;
 use App\Models\Status;
 use App\Models\Line;
-use App\Helpers\ContainerHelper;
+
 class Containers extends Component
 {
 
 
-
-    public $search;
+      
+    
+    public $search = '';
     public $sortField = 'status_id';
     public $sortDirection = 'desc';
-    public $containers = '';
+    public $containers = [];
 
     public $filters = [
         'position' => '',
@@ -32,8 +33,15 @@ class Containers extends Component
     ];
 
     protected $queryString = ['sortField', 'sortDirection', 'search', 'filters'];
+    
     public $isOpen = false;
     public $id;
+    public $ports = [];
+    public $expeditors = [];
+    public $clients = [];
+    public $statuses = [];
+    public $lines = [];
+
 
 
     public ContainerForm $form;
@@ -57,17 +65,15 @@ class Containers extends Component
 
     public function create()
     {
-        $this->form->reset();
         $this->toggleModal();
     }
 
     public function store()
     {
-        // $this->validate();
         $this->form->save();
         $this->toggleModal();
         $this->dispatch('banner_alert', style: 'success', title: 'КОНТЕЙНЕР ДОБАВЛЕН' );
-        // dd($this->isOpen);
+
     }
 
 
@@ -84,15 +90,10 @@ class Containers extends Component
     public function update()
     {
         if ($this->id) {
-
-    
             $this->form->save();
-
             $this->id = '';
             $this->toggleModal();
             $this->dispatch('banner_alert', style: 'success', title: 'КОНТЕЙНЕР ИЗМЕНЕН' );
-            $this->form->reset();
-
         }
     }
 
@@ -102,14 +103,17 @@ class Containers extends Component
     {
         $this->getContainers();   
         $this->modifyContainers();
-        $ports = Port::all();
-        $expeditors = Expeditor::all();
-        $clients = Client::all();
-        $statuses = Status::all();
-        $lines = Line::all();
-    
-        return view('livewire.containers', 
-        ['containers' => $this->containers, 'ports' => $ports,  'expeditors' => $expeditors,   'clients' => $clients, 'statuses' => $statuses, 'lines' => $lines]);
+
+        return view('livewire.containers');
+    }
+
+    public function mount()
+    {
+        $this->ports = Port::all();
+        $this->expeditors = Expeditor::all();
+        $this->clients = Client::all();
+        $this->statuses = Status::all();
+        $this->lines = Line::all();
     }
 
 
