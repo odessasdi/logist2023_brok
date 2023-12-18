@@ -17,6 +17,7 @@ class Containers extends Component
 {
 
 
+
     public $search;
     public $sortField = 'status_id';
     public $sortDirection = 'desc';
@@ -37,63 +38,47 @@ class Containers extends Component
 
     public ContainerForm $form;
 
-    public function closeModal()
+    #[On('setFiltersPosition')] 
+    public function setFiltersPosition($position)
     {
-        $this->isOpen = false;
-        $this->form->reset();
+        $this->filters['position'] = $position;
     }
 
-    public function openModal()
+
+    public function toggleModal()
     {
-        $this->resetValidation();
-        $this->isOpen = true;
+        $this->isOpen = !$this->isOpen;
+        if (!$this->isOpen) {
+            $this->form->reset();
+            $this->resetValidation();
+        }
     }
+
 
     public function create()
     {
         $this->form->reset();
-        $this->openModal();
+        $this->toggleModal();
     }
 
     public function store()
     {
         // $this->validate();
         $this->form->save();
-        $this->closeModal();
-        $this->dispatch('banner_alert', style: 'success', title: 'Permissins created successfully' );
+        $this->toggleModal();
+        $this->dispatch('banner_alert', style: 'success', title: 'КОНТЕЙНЕР ДОБАВЛЕН' );
         // dd($this->isOpen);
     }
 
 
     public function edit($id)
     {
-        $this->closeModal();
-
-        // dd('edit');
+ 
         $container = Container::findOrFail($id);
-        //  dd($container->dateStart);
-        $this->id = $id;
-        $this->form->id = $id;
-        $this->form->containerNumber = $container->containerNumber;
-        $this->form->containerGoods = $container->containerGoods;
-        $this->form->containerWeight = $container->containerWeight;
-        $this->form->line_id = $container->line_id;
-        $this->form->port_id = $container->port_id;
-        $this->form->status_id = $container->status_id;
-        $this->form->client_id = $container->client_id;
-        $this->form->expeditor_id = $container->expeditor_id;
-        $this->form->destination = $container->destination;
-        $this->form->dateStart = $container->dateStart;
-        $this->form->datePort = $container->datePort;
-        $this->form->dateStorage = $container->dateStorage;
-        $this->form->dateUkraine = $container->dateUkraine;
-        $this->form->dateOver = $container->dateOver;
-        $this->form->dateEnd = $container->dateEnd;
-        $this->form->note1 = $container->note1;
-        $this->form->note2 = $container->note2;
-
-        $this->openModal();
+        $this->form->fill($container->toArray());
+        $this->toggleModal();
     }
+    
 
 
     public function update()
@@ -104,30 +89,27 @@ class Containers extends Component
             $this->form->save();
 
             $this->id = '';
-            $this->dispatch('banner_alert', style: 'success', title: 'Permissins updated successfully' );
-            $this->closeModal();
+            $this->toggleModal();
+            $this->dispatch('banner_alert', style: 'success', title: 'КОНТЕЙНЕР ИЗМЕНЕН' );
             $this->form->reset();
 
         }
     }
 
-    #[On('setFiltersPosition')] 
-    public function setFiltersPosition($position)
-    {
-        $this->filters['position'] = $position;
-    }
+
 
     public function render()
     {
         $this->getContainers();   
         $this->modifyContainers();
-        $ports = port::all();
-        $expeditors = expeditor::all();
+        $ports = Port::all();
+        $expeditors = Expeditor::all();
         $clients = Client::all();
         $statuses = Status::all();
         $lines = Line::all();
     
-        return view('livewire.containers', ['containers' => $this->containers, 'ports' => $ports,  'expeditors' => $expeditors,   'clients' => $clients, 'statuses' => $statuses, 'lines' => $lines]);
+        return view('livewire.containers', 
+        ['containers' => $this->containers, 'ports' => $ports,  'expeditors' => $expeditors,   'clients' => $clients, 'statuses' => $statuses, 'lines' => $lines]);
     }
 
 
@@ -143,19 +125,27 @@ class Containers extends Component
     
     public function getContainers()
     {
-        $this->containers =  Container::with('port', 'line', 
-        'status', 
-        'expeditor', 'client')
+        $this->containers = Container::with('port', 'line', 'status', 'expeditor', 'client')
             ->search('containerNumber', $this->search)
-            ->when(Auth::user()->hasRole('westana'), function ($query) {
-                $query->where('expeditor_id', '1');
+            ->when($this->filters['status'], function ($query, $status) {
+                return $query->where('status_id', $status);
             })
-            ->when(Auth::user()->hasRole('client'), function ($query) {
-                $query->where('client_id', '4');
+            ->when($this->filters['port'], function ($query, $port) {
+                return $query->where('port_id', $port);
             })
+            ->when($this->filters['client'], function ($query, $client) {
+                return $query->where('client_id', $client);
+            })
+            ->when($this->filters['expeditor'], function ($query, $expeditor) {
+                return $query->where('expeditor_id', $expeditor);
+            })
+            
+
+            
             ->orderBy($this->sortField, $this->sortDirection)
             ->get();
     }
+    
 
 
     public function modifyContainers()
@@ -213,7 +203,7 @@ class Containers extends Component
 
     
             $item->position_diff_date =  Carbon::parse($item->position_date)->diffInDays(Carbon::now(), false);
-//todo
+                    //todo
             if ($item->position_diff_date < 0 and $item->position > 1 ){     
                 $item->position = $item->position - 1 ; 
             } else { 
@@ -270,22 +260,6 @@ class Containers extends Component
             $this->containers = $this->containers->sortByDesc('created_at');
         }
         
-
-        if (isset($this->filters['status'])) {
-            $this->filters['status'] ? $this->containers = $this->containers->where('status_id', $this->filters['status']) : '';
-        };
-
-        if (isset($this->filters['port'])) {
-            $this->filters['port'] ? $this->containers = $this->containers->where('port_id', $this->filters['port']) : '';
-        };
-
-        if (isset($this->filters['client'])) {
-            $this->filters['client'] ? $this->containers = $this->containers->where('client_id', $this->filters['client']) : '';
-        };
-
-        if (isset($this->filters['expeditor'])) {
-            $this->filters['expeditor'] ? $this->containers = $this->containers->where('expeditor_id', $this->filters['expeditor']) : '';
-        };
 
     
     }
